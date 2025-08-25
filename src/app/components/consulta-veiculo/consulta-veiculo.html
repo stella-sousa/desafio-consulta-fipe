@@ -1,0 +1,127 @@
+<div class="panel">
+    <div class="filters">
+        <div class="dropdown-wrapper">
+            <label for="marca-dropdown">Marca</label>
+            @if(isLoading && !codigoMarcaSelecionada) {
+            <div class="loading-wrapper">
+                <app-loading-wave />
+            </div>
+            } @else {
+
+            <select id="marca-dropdown" (change)="onMarcaChange($event)" [disabled]="isLoading">
+                <option [value]="''">Selecione uma marca</option>
+                @for (marca of marcas; track marca.codigo) {
+                <option [value]="marca.codigo">{{marca.nome}}</option>
+                }
+            </select>
+            }
+        </div>
+
+        <div class="dropdown-wrapper">
+            <label for="modelo-dropdown">Modelo</label>
+            @if(isLoading && codigoMarcaSelecionada && !codigoModeloSelecionado) {
+            <div class="loading-wrapper">
+                <app-loading-wave />
+            </div>
+            } @else {
+            <select id="modelo-dropdown" (change)="onModeloChange($event)"
+                [disabled]="!codigoMarcaSelecionada || isLoading">
+                <option [value]="''">Selecione um modelo</option>
+                @for (modelo of modelos; track modelo.codigo) {
+                <option [value]="modelo.codigo">{{modelo.nome}}</option>
+                }
+            </select>
+            }
+        </div>
+
+
+        <div class="dropdown-wrapper">
+            <label for="ano-dropdown">Ano</label>
+            @if(isLoading && codigoModeloSelecionado && codigoMarcaSelecionada && !codigoAnoSelecionado) {
+            <div class="loading-wrapper">
+                <app-loading-wave />
+            </div>
+            } @else {
+            <select id="ano-dropdown" (change)="onAnoChange($event)" [disabled]="!codigoModeloSelecionado || isLoading">
+                <option [value]="''">Selecione um ano</option>
+                @for (ano of anos; track ano.codigo) {
+                <option [value]="ano.codigo">{{ano.nome}}</option>
+                }
+            </select>
+            }
+        </div>
+
+
+        <button [disabled]="!codigoMarcaSelecionada || !codigoModeloSelecionado || !codigoAnoSelecionado || isLoading"
+            (click)="buscarVeiculo()">Consultar</button>
+
+    </div>
+    <hr />
+    <div class="results">
+
+        @if(veiculoEncontrado) {
+        <div class="results-wrapper">
+
+            <app-resultado [veiculo]="veiculoEncontrado" />
+        </div>
+        }
+
+        @if(welcomeMessage && !hasError) {
+        <div class="welcome-message">
+            <svg width="128px" height="128px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                fill="hsl(228, 20%, 30%)">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path
+                        d="M16,6l3,4h2c1.11,0,2,0.89,2,2v3h-2c0,1.66-1.34,3-3,3s-3-1.34-3-3H9c0,1.66-1.34,3-3,3s-3-1.34-3-3H1v-3c0-1.11,0.89-2,2-2 l3-4H16 M10.5,7.5H6.75L4.86,10h5.64V7.5 M12,7.5V10h5.14l-1.89-2.5H12 M6,13.5c-0.83,0-1.5,0.67-1.5,1.5s0.67,1.5,1.5,1.5 s1.5-0.67,1.5-1.5S6.83,13.5,6,13.5 M18,13.5c-0.83,0-1.5,0.67-1.5,1.5s0.67,1.5,1.5,1.5s1.5-0.67,1.5-1.5S18.83,13.5,18,13.5z">
+                    </path>
+                    <rect fill="none" width="24" height="24"></rect>
+                </g>
+            </svg>
+            <p>Pronto para consultar? <br> As informações do veículo aparecerão aqui.</p>
+            <p></p>
+        </div>
+        }
+
+        @if(isLoading && codigoAnoSelecionado) {
+        <div class="loading-results">
+            <app-loading-wave />
+            <p>Carregando...</p>
+        </div>
+        }
+
+        @if(noResultFound) {
+        <div class="no-results">
+            <svg width="128px" height="128px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path d="M10.5 15L13.5 12M13.5 15L10.5 12" stroke="hsl(228, 20%, 30%)" stroke-width="1.5"
+                        stroke-linecap="round"></path>
+                    <path
+                        d="M22 11.7979C22 9.16554 22 7.84935 21.2305 6.99383C21.1598 6.91514 21.0849 6.84024 21.0062 6.76946C20.1506 6 18.8345 6 16.2021 6H15.8284C14.6747 6 14.0979 6 13.5604 5.84678C13.2651 5.7626 12.9804 5.64471 12.7121 5.49543C12.2237 5.22367 11.8158 4.81578 11 4L10.4497 3.44975C10.1763 3.17633 10.0396 3.03961 9.89594 2.92051C9.27652 2.40704 8.51665 2.09229 7.71557 2.01738C7.52976 2 7.33642 2 6.94975 2C6.06722 2 5.62595 2 5.25839 2.06935C3.64031 2.37464 2.37464 3.64031 2.06935 5.25839C2 5.62595 2 6.06722 2 6.94975M21.9913 16C21.9554 18.4796 21.7715 19.8853 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V11"
+                        stroke="hsl(228, 20%, 30%)" stroke-width="1.5" stroke-linecap="round"></path>
+                </g>
+            </svg>
+            <p>Nenhum veículo encontrado para os filtros selecionados.</p>
+        </div>
+        }
+
+        @if(hasError) {
+        <div class="error">
+            <svg width="128px" height="128px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path
+                        d="M7.493 0.015 C 7.442 0.021,7.268 0.039,7.107 0.055 C 5.234 0.242,3.347 1.208,2.071 2.634 C 0.660 4.211,-0.057 6.168,0.009 8.253 C 0.124 11.854,2.599 14.903,6.110 15.771 C 8.169 16.280,10.433 15.917,12.227 14.791 C 14.017 13.666,15.270 11.933,15.771 9.887 C 15.943 9.186,15.983 8.829,15.983 8.000 C 15.983 7.171,15.943 6.814,15.771 6.113 C 14.979 2.878,12.315 0.498,9.000 0.064 C 8.716 0.027,7.683 -0.006,7.493 0.015 M8.853 1.563 C 9.967 1.707,11.010 2.136,11.944 2.834 C 12.273 3.080,12.920 3.727,13.166 4.056 C 13.727 4.807,14.142 5.690,14.330 6.535 C 14.544 7.500,14.544 8.500,14.330 9.465 C 13.916 11.326,12.605 12.978,10.867 13.828 C 10.239 14.135,9.591 14.336,8.880 14.444 C 8.456 14.509,7.544 14.509,7.120 14.444 C 5.172 14.148,3.528 13.085,2.493 11.451 C 2.279 11.114,1.999 10.526,1.859 10.119 C 1.618 9.422,1.514 8.781,1.514 8.000 C 1.514 6.961,1.715 6.075,2.160 5.160 C 2.500 4.462,2.846 3.980,3.413 3.413 C 3.980 2.846,4.462 2.500,5.160 2.160 C 6.313 1.599,7.567 1.397,8.853 1.563 M7.706 4.290 C 7.482 4.363,7.355 4.491,7.293 4.705 C 7.257 4.827,7.253 5.106,7.259 6.816 C 7.267 8.786,7.267 8.787,7.325 8.896 C 7.398 9.033,7.538 9.157,7.671 9.204 C 7.803 9.250,8.197 9.250,8.329 9.204 C 8.462 9.157,8.602 9.033,8.675 8.896 C 8.733 8.787,8.733 8.786,8.741 6.816 C 8.749 4.664,8.749 4.662,8.596 4.481 C 8.472 4.333,8.339 4.284,8.040 4.276 C 7.893 4.272,7.743 4.278,7.706 4.290 M7.786 10.530 C 7.597 10.592,7.410 10.753,7.319 10.932 C 7.249 11.072,7.237 11.325,7.294 11.495 C 7.388 11.780,7.697 12.000,8.000 12.000 C 8.303 12.000,8.612 11.780,8.706 11.495 C 8.763 11.325,8.751 11.072,8.681 10.932 C 8.616 10.804,8.460 10.646,8.333 10.580 C 8.217 10.520,7.904 10.491,7.786 10.530 "
+                        stroke="none" fill-rule="evenodd" fill="hsl(228, 20%, 30%)"></path>
+                </g>
+            </svg>
+            <p>Algo deu errado. Tente novamente.</p>
+        </div>
+        }
+    </div>
+
+</div>
