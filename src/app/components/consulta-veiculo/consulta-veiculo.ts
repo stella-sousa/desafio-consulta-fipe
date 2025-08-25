@@ -32,7 +32,6 @@ export class ConsultaVeiculo implements OnInit {
   
     this.fipeService.getMarcasVeiculo().subscribe({
       next: (marcas) => {
-      console.log("Marcas recebidas: ", marcas);
       this.marcas = marcas;
       this.isLoading = false;
       },
@@ -65,7 +64,6 @@ export class ConsultaVeiculo implements OnInit {
 
       this.fipeService.getModelosVeiculo(this.codigoMarcaSelecionada).subscribe({
         next: (modelos) => {
-          console.log("Modelos recebidos: ", modelos);
           this.modelos = modelos;
           this.isLoading = false;
         },
@@ -95,7 +93,6 @@ export class ConsultaVeiculo implements OnInit {
 
       this.fipeService.getAnos(this.codigoMarcaSelecionada, this.codigoModeloSelecionado).subscribe({
         next: (anos) => {
-          console.log("Anos recebidos: ", anos);
           this.anos = anos;
           this.isLoading = false;
         },
@@ -127,7 +124,6 @@ export class ConsultaVeiculo implements OnInit {
       this.fipeService.getDadosVeiculo(this.codigoMarcaSelecionada, this.codigoModeloSelecionado, this.codigoAnoSelecionado).subscribe({
         next: (veiculo) => {
           if(veiculo && veiculo.CodigoFipe) {
-            console.log("Veiculo encontrado: ", veiculo);
             this.veiculoEncontrado = veiculo;
           } else {
             this.veiculoEncontrado = null;
